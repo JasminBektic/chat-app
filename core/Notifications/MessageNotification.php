@@ -19,10 +19,10 @@ class MessageNotification implements Notification
 
         switch($messageType) {
             case CLIENT_CONNECTION:
-                $message = 'New client ' . $clientIPAddress.' joined';
+                $message = '<span class="text-success">New client ' . $clientIPAddress.' joined</span>';
                 break;
             case CLIENT_DISCONNECTION:
-                $message = 'Client ' . $clientIPAddress.' disconnected';
+                $message = '<span clasS="text-danger">Client ' . $clientIPAddress.' disconnected</span>';
                 break;
             default:
                 $message = '';

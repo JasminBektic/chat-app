@@ -1,0 +1,13 @@
+body {
+    padding: 15px 0;
+}
+
+.chatbox {
+    overflow-y: scroll;
+    height: 80vh;
+    padding: 10px;
+}
+
+.center {
+    margin: 0 auto;
+}

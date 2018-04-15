@@ -11,13 +11,13 @@ $(document).ready(function(){
     websocket.onopen = function(event) { 
         console.log(event);
         
-        showMessage('<div>Connection is established!</div>');		
+        showMessage('<div class="text-success font-weight-bold">## Connection established!</div>');		
     }
     websocket.onmessage = function(event) {
         console.log('onmessage');
         console.log(event);
         var data = JSON.parse(event.data);
-        showMessage('<div>' +data.message+ '</div>');
+        showMessage('<div class="col-md-12 mt-3">' +data.message+ '</div>');
         $('#chat-message').val('');
     };
     
