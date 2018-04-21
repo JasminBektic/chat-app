@@ -12,10 +12,14 @@ class ClientChatboxNotification implements Notification
      *
      * @param string $messageBox
      * @param string $messageType
+     * @param string $clientData
      * @return string
      */
-    public function message($messageBox, $messageType) : string {
+    public function message($messageBox, $messageType, $clientData) : string {
         $messageBox = json_decode($messageBox);
+
+        if (!isset($messageBox->username) && !isset($messageBox->message) || $messageBox->message == '') 
+            return '';
 
         switch($messageType) {
             case CLIENT_CHATBOX:

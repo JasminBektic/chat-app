@@ -1,53 +1,67 @@
 // drop everything here and refactor later
 
-function showMessage(html) {
-    $('#chat-box').append(html);
-}
+var websocket;
 
-$(document).ready(function(){
-    var websocket = new WebSocket('ws://localhost:3030/php_playground/server.php'); 
-    console.log(websocket);
-    
-    websocket.onopen = function(event) { 
-        console.log(event);
-        
-        showMessage('<div class="text-success font-weight-bold">## Connection established!</div>');		
+$('#join').on('click', function(e) {
+    $('.login').css({display:'none'});
+    connect();
+});
+
+$('#user').keyup(function(e) {
+    $join_btn = $('#join');
+    if (this.value !== '') {
+        $join_btn.prop('disabled', false);
+    } else {
+        $join_btn.prop('disabled', true);
     }
-    websocket.onmessage = function(event) {
-        console.log('onmessage');
-        console.log(event);
-        var data = JSON.parse(event.data);
-        showMessage('<div class="col-md-12 mt-3">' +data.message+ '</div>');
-        $('#chat-message').val('');
-    };
-    
-    websocket.onerror = function(event){
-        console.log(event);
-        showMessage('<div>Problem due to some Error</div>');
-    };
-    websocket.onclose = function(event){
-        console.log(event);
-        showMessage('<div>Connection Closed</div>');
-    }; 
+});
 
+$('#message').keypress(function(e) {
+    if(e.keyCode == 13) {
+        $('#send').click();
+        e.preventDefault();
+    }
+});
 
-    // $(document).keypress(function(e) {
-    //     var keycode = e.keyCode || e.which;
-    //     if(keycode === '13') {
-    //         sendData(websocket);
-    //     }
-    // });
-
-    $('#btn-send').on('click', function(e) {
-        sendData(websocket);
-    });
+$('#send').on('click', function(e) {
+    sendData();
 });
 
 
-function sendData(websocket) {
+function connect() {
+    websocket = new WebSocket('ws://localhost:3030/php_playground/server.php');
+
+    websocket.onopen = function(event) { 
+        var data = {
+            username: $('#user').val()
+        };
+        websocket.send(JSON.stringify(data));
+        generateMessage('<div class="text-success font-weight-bold">## Connection established!</div>');		
+    }
+
+    websocket.onmessage = function(event) {
+        var data = JSON.parse(event.data);
+        generateMessage('<div class="col-md-12 mt-3">' +data.message+ '</div>');
+        $('#message').val('');
+    };
+    
+    websocket.onerror = function(event){
+        generateMessage('<div class="text-danger font-weight-bold"># Problem due to some Error</div>');
+    };
+
+    websocket.onclose = function(event){
+        generateMessage('<div class="text-danger font-weight-bold">## Connection Closed</div>');
+    }; 
+};
+
+function generateMessage(html) {
+    $('#chat-box').append(html);
+}
+
+function sendData() {
     var data = {
-        username: $('#chat-user').val(),
-        message: $('#chat-message').val()
+        username: $('#user').val(),
+        message: $('#message').val()
     };
 
     websocket.send(JSON.stringify(data));

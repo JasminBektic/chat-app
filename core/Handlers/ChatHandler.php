@@ -9,7 +9,7 @@ class ChatHandler extends Handler
 {
 	
 	public function __construct() {
-        //
+		//
 	}
 
 	/**
@@ -41,6 +41,20 @@ class ChatHandler extends Handler
 
 		return $clientSockets;
 	}
+
+	/**
+	 * Remove specific client data
+	 *
+	 * @param string $socket
+	 * @return string
+	 */
+	public function destroyClientData($socket) {
+		$index = array_search($socket, $this->clientSockets);
+		$clientData = $this->clients[$index - 1];
+		unset($this->clients[$index - 1]);
+
+		return $clientData;
+	}
 	
 	/**
 	 * Socket initialization
@@ -66,11 +80,11 @@ class ChatHandler extends Handler
 		$RFCMagicString = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 		$secAccept = base64_encode(pack('H*', sha1($secKey . $RFCMagicString)));
 		$buffer = "HTTP/1.1 101 Web Socket Protocol Handshake\r\n" .
-					"Upgrade: websocket\r\n" .
-					"Connection: Upgrade\r\n" .
-					"WebSocket-Origin: $host\r\n" .
-					"WebSocket-Location: ws://$host:$port\r\n".
-					"Sec-WebSocket-Accept:$secAccept\r\n\r\n";
+				  "Upgrade: websocket\r\n" .
+				  "Connection: Upgrade\r\n" .
+				  "WebSocket-Origin: $host\r\n" .
+				  "WebSocket-Location: ws://$host:$port\r\n".
+				  "Sec-WebSocket-Accept:$secAccept\r\n\r\n";
 
 		socket_write($socket, $buffer, strlen($buffer));
 	}
@@ -83,14 +97,15 @@ class ChatHandler extends Handler
 	 * @param string $messageType
 	 * @return void
 	 */
-	public function message(Notification $notification, $socketResource, $messageType) {
+	public function message(Notification $notification, $socketResource, $messageType, $clientData = false) {
 		switch($messageType) {
 			case CLIENT_CHATBOX:
 				$socketResource = $this->unmask($socketResource);
-				$message = $notification->message($socketResource, $messageType);
+				$message = $notification->message($socketResource, $messageType, NULL);
 				break;
 			default:
-				$message = $notification->message($socketResource, $messageType);
+				$clientData = $this->unmask($clientData);
+				$message = $notification->message($socketResource, $messageType, $clientData);
 		}
 
 		$message = $this->mask($message);

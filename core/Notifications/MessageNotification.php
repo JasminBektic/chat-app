@@ -12,17 +12,19 @@ class MessageNotification implements Notification
      *
      * @param resource $socketResource
      * @param string $messageType
+     * @param string $clientData
      * @return string
      */
-    public function message($socketResource, $messageType) : string {
+    public function message($socketResource, $messageType, $clientData) : string {
         socket_getpeername($socketResource, $clientIPAddress);
+        $clientData = json_decode($clientData);
 
         switch($messageType) {
             case CLIENT_CONNECTION:
-                $message = '<span class="text-success">New client ' . $clientIPAddress.' joined</span>';
+                $message = '<span class="text-success">' . $clientData->username . ' &nbsp;[' . $clientIPAddress . ']&nbsp; joined the room</span>';
                 break;
             case CLIENT_DISCONNECTION:
-                $message = '<span clasS="text-danger">Client ' . $clientIPAddress.' disconnected</span>';
+                $message = '<span class="text-danger">' . $clientData->username . ' &nbsp;[' . $clientIPAddress . ']&nbsp; left the room</span>';
                 break;
             default:
                 $message = '';

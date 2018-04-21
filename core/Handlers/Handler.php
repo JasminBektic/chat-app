@@ -12,4 +12,11 @@ abstract class Handler
      */
     public $clientSockets;
 
+    /**
+     * Clients data
+     *
+     * @var array
+     */
+    public $clients;
+
 }

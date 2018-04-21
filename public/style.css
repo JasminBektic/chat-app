@@ -11,3 +11,12 @@ body {
 .center {
     margin: 0 auto;
 }
+
+.login {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 1;
+    padding: 10% 30%;
+}
