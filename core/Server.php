@@ -33,7 +33,7 @@ class Server
                 socket_recv($newSocket, $clientData, 1024, 0);
                 $chatHandler->clientSockets[] = $newSocket;
                 $chatHandler->clients[] = $clientData;
-
+            
                 $chatHandler->message(new MessageNotification, $newSocket, CLIENT_CONNECTION, $clientData);
                 $clientSockets = $chatHandler->destroySocket($socket, $clientSockets);
             }
